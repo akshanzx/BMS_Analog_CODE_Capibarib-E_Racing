@@ -1,0 +1,12 @@
+../Core/Src/main.c:128:8:send_voltages_CAN	72	static
+../Core/Src/main.c:95:5:main	48	static
+../Core/Src/main.c:194:6:SystemClock_Config	88	static
+../Core/Src/main.c:241:13:MX_ADC1_Init	56	static
+../Core/Src/main.c:309:13:MX_FDCAN1_Init	8	static
+../Core/Src/main.c:352:13:MX_I2C1_Init	8	static
+../Core/Src/main.c:400:13:MX_LPUART1_UART_Init	8	static
+../Core/Src/main.c:447:13:MX_SPI1_Init	8	static
+../Core/Src/main.c:487:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:574:1:__io_putchar	16	static
+../Core/Src/main.c:583:1:__io_getchar	16	static
+../Core/Src/main.c:602:6:Error_Handler	4	static,ignoring_inline_asm
