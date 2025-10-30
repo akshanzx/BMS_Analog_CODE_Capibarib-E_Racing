@@ -24,8 +24,8 @@
 #include "adBms_Application.h"
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>  // <<--- ADICIONE ISTO
-#include <stdint.h>   // (opcional, mas recomendado)
+#include <stdbool.h>
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
