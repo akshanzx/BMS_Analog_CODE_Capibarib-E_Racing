@@ -102,6 +102,9 @@ extern float tensao_med;
 void calcular_tensoes_min_med_max(uint8_t tIC, cell_asic *ic_array);
 void init_config();
 
+//vtps
+void balancing_test(uint8_t tIC, cell_asic *ic)
+
 #endif
 /** @}*/
 /** @}*/

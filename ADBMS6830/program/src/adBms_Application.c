@@ -196,6 +196,10 @@ void run_command(int cmd)
       calcular_tensoes_min_med_max(TOTAL_IC, &IC[0]);
       break;
 
+  case 23:
+    balancing_test(TOTAL_IC, &IC[0]);
+    break;
+
   case 0:
     printMenu();
     break;
@@ -723,6 +727,82 @@ void calcular_tensoes_min_med_max(uint8_t tIC, cell_asic *ic_array)
 void init_config(){
 
 	adBms6830_init_config(TOTAL_IC, &IC[0]);
+}
+
+/**
+*******************************************************************************
+* @brief testandp um ciclo de lógica de balanceamento.(vtps) - NÃO VALIDADO
+*******************************************************************************
+*/
+void balancing_test(uint8_t tIC, cell_asic *ic)
+{
+  const float BALANCING_THRESHOLD = 0.030; // 30mV
+  float min_voltage = 5.0; // Inicia com um valor alto
+  float cell_voltages[CELL];
+  int i;
+
+  //Acorda o CI e lê todas as tensões das células
+  adBms6830_read_cell_voltages(tIC, ic);
+
+  //Converter as leituras brutas para float e encontra a tensão mínima
+  for (int cic = 0; cic < tIC; cic++)
+  {
+    printf("--- Analisando IC %d para Balanceamento ---\n", cic + 1);
+    min_voltage = 5.0;
+    for (i = 0; i < CELL; i++)
+    {
+      //A função getVoltage está em serialPrintResult.c
+      cell_voltages[i] = getVoltage(ic[cic].cell.c_codes[i]);
+      if (cell_voltages[i] < min_voltage)
+      {
+        min_voltage = cell_voltages[i];
+      }
+    }
+    printf("Tensão mínima encontrada: %fV\n", min_voltage);
+
+    //Limpa as configurações de balanceamento anteriores
+    for (i = 0; i < PWMA; i++) {
+        ic[cic].PwmA.pwma[i] = PWM_0_0_PCT; // Desliga
+    }
+    for (i = 0; i < PWMB; i++) {
+        ic[cic].PwmB.pwmb[i] = PWM_0_0_PCT; // Desliga
+    }
+
+    //Decide quais células balancear e define o duty cycle
+    for (i = 0; i < CELL; i++)
+    {
+      if (cell_voltages[i] > (min_voltage + BALANCING_THRESHOLD))
+      {
+        printf("Célula %d (%fV) será balanceada.\n", i + 1, cell_voltages[i]);
+        // Define um duty cycle de 33% como exemplo
+        if (i < 12) // Células 1-12 estão no registrador PWMA
+        {
+          ic[cic].PwmA.pwma[i] = PWM_33_0_PCT;
+        }
+        else // Células 13-16 estão no registrador PWMB
+        {
+          ic[cic].PwmB.pwmb[i - 12] = PWM_33_0_PCT;
+        }
+      }
+    }
+
+    //Acorda o CI e escreve as novas configurações de PWM
+    adBmsWakeupIc(tIC);
+    printf("Enviando comandos de balanceamento PWM...\n");
+    //WRPWM1 e WRPWM2 são os comandos para os registradores A e B de PWM
+    adBmsWriteData(tIC, &ic[cic], WRPWM1, Pwm, A);
+    adBmsWriteData(tIC, &ic[cic], WRPWM2, Pwm, B);
+  }
+  printf("--- Ciclo de Balanceamento Concluído ---\n\n");
+
+  for (int cic = 0; cic < tIC; cic++){
+    for (i = 0; i < PWMA; i++) {
+        ic[cic].PwmA.pwma[i] = PWM_0_0_PCT; // Desliga
+    }
+    for (i = 0; i < PWMB; i++) {
+          ic[cic].PwmB.pwmb[i] = PWM_0_0_PCT; // Desliga
+    }
+  }
 }
 
 /** @}*/
