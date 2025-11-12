@@ -93,7 +93,7 @@ void adBms6830_read_rdasall_voltage(uint8_t tIC, cell_asic *ic);
 void adbms_main(void);
 
 
-// Arthur code
+// ast
 
 extern float tensao_min;
 extern float tensao_max;

@@ -685,7 +685,7 @@ void adBms6830_clear_fcell_measurement(uint8_t tIC)
 }
 /**
 *******************************************************************************
-* @brief Arthur code
+* @brief envio de tensões via CAN (ast) - VALIDADO
 *******************************************************************************
 */
 
